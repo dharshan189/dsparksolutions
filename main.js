@@ -149,24 +149,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Contact form handling
-    const contactForm = document.querySelector('.contact-form');
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const btn = contactForm.querySelector('button');
-        const originalText = btn.innerText;
-        btn.innerText = 'Sending...';
-        btn.disabled = true;
-
-        setTimeout(() => {
-            btn.innerText = 'Message Sent!';
-            btn.style.background = 'var(--accent-blue)';
-            contactForm.reset();
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.background = 'var(--gradient-1)';
-                btn.disabled = false;
-            }, 3000);
-        }, 1500);
-    });
+    // Contact form handling with Formspree
+    if (window.formspree) {
+        window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+        formspree('initForm', { 
+            formElement: '#contact-form', 
+            formId: 'xwvyjnaj',
+            onSuccess: (data) => {
+                const form = document.getElementById('contact-form');
+                form.style.display = 'none';
+                document.getElementById('form-status-success').style.display = 'block';
+            }
+        });
+    } else {
+        // Fallback or wait for script to load
+        window.addEventListener('load', () => {
+            if (window.formspree) {
+                formspree('initForm', { 
+                    formElement: '#contact-form', 
+                    formId: 'xwvyjnaj',
+                    onSuccess: (data) => {
+                        const form = document.getElementById('contact-form');
+                        form.style.display = 'none';
+                        document.getElementById('form-status-success').style.display = 'block';
+                    }
+                });
+            }
+        });
+    }
 });
