@@ -11,65 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Preloader removal and Opening Sound
+    // Preloader removal
     const preloader = document.getElementById('preloader');
     const preloaderContent = document.querySelector('.preloader-content');
-    const openingSound = document.getElementById('opening-sound');
     const startBtn = document.getElementById('start-btn');
 
     const startRevealSequence = () => {
-        // Reveal site fully after exactly 8 seconds of the sound playing
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
-            setTimeout(revealOnScroll, 500);
-        }, 8000);
-    };
-
-    const playOpeningSound = () => {
-        if (openingSound) {
-            openingSound.volume = 1.0;
-            openingSound.play().then(() => {
-                // Start reveal sequence only AFTER sound successfully starts
-                startRevealSequence();
-                
-                // Stop sound after 8 seconds
-                setTimeout(() => {
-                    openingSound.pause();
-                    openingSound.currentTime = 0;
-                }, 8000);
-            }).catch((error) => {
-                console.error("Playback failed:", error);
-            });
-        }
+        preloader.style.opacity = '0';
+        preloader.style.visibility = 'hidden';
+        setTimeout(revealOnScroll, 500);
     };
 
     if (startBtn) {
         startBtn.addEventListener('click', () => {
-            // 1. Instant sound trigger
-            if (openingSound) {
-                openingSound.volume = 1.0;
-                openingSound.play();
-                
-                // Start professional fade out at 6 seconds, finish at 8 seconds
-                setTimeout(() => {
-                    const fadeInterval = setInterval(() => {
-                        if (openingSound.volume > 0.05) {
-                            openingSound.volume -= 0.05;
-                        } else {
-                            openingSound.volume = 0;
-                            openingSound.pause();
-                            openingSound.currentTime = 0;
-                            clearInterval(fadeInterval);
-                        }
-                    }, 100); // Fade every 100ms
-                }, 6000); 
-            }
-            
-            // 2. Instant reveal sequence start
-            startRevealSequence();
-            
-            // 3. Instant UI feedback
+            // Instant UI feedback
             startBtn.style.opacity = '0';
             startBtn.style.pointerEvents = 'none';
             
@@ -78,8 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 preloaderContent.style.opacity = '0';
             }
             
-            preloader.style.transition = 'opacity 8s cubic-bezier(0.4, 0, 0.2, 1)';
-            preloader.style.opacity = '0.4';
+            // Faster reveal now that BGM is removed
+            preloader.style.transition = 'opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+            preloader.style.opacity = '0';
+            
+            setTimeout(startRevealSequence, 1500);
         });
     }
 
@@ -149,6 +107,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Modal Logic
+    const successModal = document.getElementById('success-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+
+    const showSuccessPopup = () => {
+        successModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            successModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            // Optional: reset and show form again or redirect
+            const form = document.getElementById('contact-form');
+            if (form) {
+                form.reset();
+                form.style.display = 'flex';
+                const successStatus = document.getElementById('form-status-success');
+                if (successStatus) successStatus.style.display = 'none';
+            }
+        });
+    }
+
     // Contact form handling with Formspree
     if (window.formspree) {
         window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
@@ -156,9 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formElement: '#contact-form', 
             formId: 'xwvyjnaj',
             onSuccess: (data) => {
-                const form = document.getElementById('contact-form');
-                form.style.display = 'none';
-                document.getElementById('form-status-success').style.display = 'block';
+                showSuccessPopup();
             }
         });
     } else {
@@ -169,9 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     formElement: '#contact-form', 
                     formId: 'xwvyjnaj',
                     onSuccess: (data) => {
-                        const form = document.getElementById('contact-form');
-                        form.style.display = 'none';
-                        document.getElementById('form-status-success').style.display = 'block';
+                        showSuccessPopup();
                     }
                 });
             }
