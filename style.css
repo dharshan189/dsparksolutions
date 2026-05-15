@@ -754,6 +754,22 @@ nav {
         align-items: center;
         gap: 1.5rem;
     }
+
+    .contact-info h2 {
+        font-size: clamp(1.8rem, 8vw, 2.5rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-method-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.8rem;
+    }
+
+    .contact-method-text p {
+        font-size: 1rem;
+    }
 }
 
 .contact-info {
@@ -1149,8 +1165,24 @@ button:disabled {
     .icon-sticker {
         width: 50px;
         height: 50px;
+        border-radius: 12px;
     }
 }
+
+@media (max-width: 480px) {
+    .contact-info, .contact-form-side {
+        padding: 2.5rem 1rem;
+    }
+    
+    .contact-method-text span {
+        font-size: 0.75rem;
+    }
+    
+    .contact-method-text p {
+        font-size: 0.95rem;
+    }
+}
+
 
 /* Modal Styles */
 .modal {
