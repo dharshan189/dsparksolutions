@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.classList.add('counted');
                     const counter = card.querySelector('.stat-number');
                     const target = +counter.getAttribute('data-target');
-                    const duration = 2000;
+                    const duration = 1000;
                     const startTime = performance.now();
 
                     const updateCounter = (currentTime) => {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const progress = Math.min(elapsed / duration, 1);
                         const isFloat = target % 1 !== 0;
                         const currentVal = progress * target;
-                        const current = isFloat ? currentVal.toFixed(1) : Math.floor(currentVal);
+                        const current = isFloat ? currentVal.toFixed(1) : (currentVal === 0 ? 0 : Math.ceil(currentVal));
                         const suffix = counter.getAttribute('data-suffix') || '';
                         counter.innerText = current + (progress === 1 ? suffix : '');
                         
