@@ -1,12 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Reveal animations on scroll
     const revealElements = document.querySelectorAll('.reveal');
+    const statCards = document.querySelectorAll('.stat-card');
     const revealOnScroll = () => {
+        // Handle reveal elements
         revealElements.forEach(el => {
             const elementTop = el.getBoundingClientRect().top;
             const windowHeight = window.innerHeight;
             if (elementTop < windowHeight - 100) {
                 el.classList.add('active');
+            }
+        });
+
+        // Handle stat cards independently for counting
+        statCards.forEach(card => {
+            const elementTop = card.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            if (elementTop < windowHeight - 50) {
+                if (!card.classList.contains('counted')) {
+                    card.classList.add('counted');
+                    const counter = card.querySelector('.stat-number');
+                    const target = +counter.getAttribute('data-target');
+                    const duration = 2000;
+                    const startTime = performance.now();
+
+                    const updateCounter = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const isFloat = target % 1 !== 0;
+                        const currentVal = progress * target;
+                        const current = isFloat ? currentVal.toFixed(1) : Math.floor(currentVal);
+                        const suffix = counter.getAttribute('data-suffix') || '';
+                        counter.innerText = current + (progress === 1 ? suffix : '');
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.innerText = target + suffix;
+                        }
+                    };
+                    requestAnimationFrame(updateCounter);
+                }
             }
         });
     };
